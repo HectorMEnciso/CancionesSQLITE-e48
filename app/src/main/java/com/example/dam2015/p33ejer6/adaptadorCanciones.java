@@ -11,10 +11,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class adaptadorCanciones extends ArrayAdapter<Cancion>{
     Activity context;
     ArrayList<Cancion> ca;
+
 
     adaptadorCanciones(Activity context,ArrayList<Cancion> c){
         super(context, R.layout.activity_main,c);
@@ -22,6 +24,7 @@ public class adaptadorCanciones extends ArrayAdapter<Cancion>{
         this.ca=c;
     }
     public void addCancion(int id,String titulo, String autor, String duracion,ArrayList<Cancion> canciones){
+
         canciones.add(new Cancion (id,titulo,autor,duracion));
     }
 

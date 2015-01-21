@@ -12,7 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,13 +24,14 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends Activity {
     private TextView lblTitulo;
     private TextView lblAutor;
     private TextView lblDuracion;
     private ListView LstOpciones;
-
+    DBController controller = new DBController(this);
     adaptadorCanciones adaptador;
     private ArrayList<Cancion> datos = new ArrayList<Cancion>();
     int posi;
@@ -39,10 +42,27 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         adaptador = new adaptadorCanciones(this, datos);
         LstOpciones = (ListView) findViewById(R.id.LstOpciones);
-        LstOpciones.setAdapter(adaptador);
-        addOnClickView();
-        registerForContextMenu(LstOpciones);
 
+        //addOnClickView();
+        registerForContextMenu(LstOpciones);
+        ArrayList<HashMap<String, String>> cancionList =  controller.getAllCanciones();
+        if(cancionList.size()!=0) {
+            LstOpciones.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+
+                    //String valAnimalId = animalId.getText().toString();
+                    Intent  objIndent = new Intent(getApplicationContext(),editActivity.class);
+                    //objIndent.putExtra("animalId", valAnimalId);
+                    objIndent.putExtra("titulo", adaptador.getItem(position).getTitulo().toString());
+                    objIndent.putExtra("autor", adaptador.getItem(position).getAutor().toString());
+                    objIndent.putExtra("duracion", adaptador.getItem(position).getDuracion().toString());
+                    startActivity(objIndent);
+                }
+            });
+            //ListAdapter adaptador = new SimpleAdapter( MainActivity.this,cancionList, R.id.LstOpciones, new String[] { "titulo","autor","duracion"}, new int[] {R.id.lblTitulo, R.id.lblAutor, R.id.lblDuracion});
+            LstOpciones.setAdapter(adaptador);
+        }
     }
 
     //Generacion del menu a partir del menu_main.xml
@@ -93,6 +113,9 @@ public class MainActivity extends Activity {
                 Toast.makeText(getBaseContext(), datos.get(posi).getAutor(), Toast.LENGTH_SHORT).show();
                 Toast.makeText(getBaseContext(), datos.get(posi).getDuracion(), Toast.LENGTH_SHORT).show();
                 adaptador.delCancion(datos, posi);
+                Intent objIntent = getIntent();
+                String CancionId = objIntent.getStringExtra("id");
+                controller.deleteCancion(CancionId);
                 adaptador.notifyDataSetChanged();//Refresca adaptador.
                 return true;
             default:
@@ -128,7 +151,7 @@ public class MainActivity extends Activity {
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 Bundle bundle = data.getExtras();
-               // adaptador.addCancion(R.drawable.rihanna, bundle.getString("titulo"), bundle.getString("autor"), bundle.getString("duracion"));
+               adaptador.addCancion(R.drawable.rihanna, bundle.getString("titulo"), bundle.getString("autor"), bundle.getString("duracion"),datos);
                 Toast.makeText(getBaseContext(), "Canción añadida", Toast.LENGTH_SHORT).show();
                 adaptador.notifyDataSetChanged();//Refresca adaptador.
             }
@@ -137,7 +160,7 @@ public class MainActivity extends Activity {
             if (resultCode == RESULT_OK) {
                 Bundle bundle = data.getExtras();
                 //AdapterView
-               // adaptador.editCancion(new Cancion(R.drawable.rihanna, bundle.getString("titulo"), bundle.getString("autor"), bundle.getString("duracion")), Integer.parseInt(bundle.getString("pos")));
+                adaptador.editCancion(new Cancion(R.drawable.rihanna, bundle.getString("titulo"), bundle.getString("autor"), bundle.getString("duracion")), Integer.parseInt(bundle.getString("pos")),datos);
                 adaptador.notifyDataSetChanged();//Refresca adaptador.
             }
         }

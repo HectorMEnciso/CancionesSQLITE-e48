@@ -24,6 +24,9 @@ public class addActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_canciones);
+        Titulo = (EditText) findViewById(R.id.entradaTitulo);
+        Autor = (EditText) findViewById(R.id.entradaAutor);
+        Duracion = (EditText) findViewById(R.id.entradaDuracion);
     }
     public void addNewCancion(View view) {
         HashMap<String, String> queryValues =  new  HashMap<String, String>();
@@ -38,6 +41,8 @@ public class addActivity extends Activity {
         startActivity(objIntent);
     }
     public void onClick(View v){
+
+        addNewCancion(v);
        /* Intent data = new Intent();
         Titulo = (EditText) findViewById(R.id.entradaTitulo);
         Autor = (EditText) findViewById(R.id.entradaAutor);
@@ -47,9 +52,7 @@ public class addActivity extends Activity {
         b.putString("autor", Autor.getText().toString());
         b.putString("duracion", Duracion.getText().toString());
         data.putExtras(b);
-
         setResult(RESULT_OK,data);*/
-        addNewCancion(v);
         //---closes the activity---
        // finish();
     }

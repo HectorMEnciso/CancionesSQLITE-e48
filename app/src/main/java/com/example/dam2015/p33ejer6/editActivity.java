@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import java.util.HashMap;
+
 /**
  * Created by Hector on 15/12/2014.
  */
@@ -17,7 +19,7 @@ public class editActivity extends Activity {
     private EditText Titulo;
     private EditText Autor;
     private EditText Duracion;
-
+    DBController controller = new DBController(this);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,28 +29,58 @@ public class editActivity extends Activity {
         Titulo = (EditText) findViewById(R.id.entradaTitulo);
         Autor = (EditText) findViewById(R.id.entradaAutor);
         Duracion = (EditText) findViewById(R.id.entradaDuracion);
-        String titulo,autor,duracion;
+        /*String titulo,autor,duracion;
         titulo=getIntent().getStringExtra("titulo");
         autor=getIntent().getStringExtra("autor");
         duracion=getIntent().getStringExtra("duracion");
 
         Titulo.setText(titulo);
         Autor.setText(autor);
-        Duracion.setText(duracion);
+        Duracion.setText(duracion);*/
+
+        Intent objIntent = getIntent();
+        String id = objIntent.getStringExtra("id");
+        HashMap<String, String> CancionList = controller.getCancionInfo(id);
+        if(CancionList.size()!=0) {
+            Titulo.setText(CancionList.get("titulo"));
+            Autor.setText(CancionList.get("autor"));
+            Duracion.setText(CancionList.get("duracion"));
+        }
+    }
+
+    public void editCancion(View view) {
+        HashMap<String, String> queryValues =  new  HashMap<String, String>();
+        Titulo = (EditText) findViewById(R.id.entradaTitulo);
+        Autor = (EditText) findViewById(R.id.entradaAutor);
+        Duracion = (EditText) findViewById(R.id.entradaDuracion);
+        Intent objIntent = getIntent();
+        String CancionId = objIntent.getStringExtra("id");
+        queryValues.put("id", CancionId);
+        queryValues.put("titulo", Titulo.getText().toString());
+        queryValues.put("autor", Autor.getText().toString());
+        queryValues.put("duracion", Duracion.getText().toString());
+
+        controller.updateCancion(queryValues);
+        this.callHomeActivity(view);
 
     }
-    public void onClick(View v){
+
+    public void callHomeActivity(View view) {
+        Intent objIntent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(objIntent);
+    }
+    public void onClick(final View v){
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
         builder1.setMessage("¿Está seguro que desea modificar la canción? ");
         builder1.setCancelable(true);
         builder1.setPositiveButton("Sí",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent data = new Intent();
+                       // Intent data = new Intent();
                         Titulo = (EditText) findViewById(R.id.entradaTitulo);
                         Autor = (EditText) findViewById(R.id.entradaAutor);
                         Duracion = (EditText) findViewById(R.id.entradaDuracion);
-                        Bundle b= new Bundle();
+                       /* Bundle b= new Bundle();
                         b.putString("titulo",Titulo.getText().toString());
                         b.putString("autor", Autor.getText().toString());
                         b.putString("duracion", Duracion.getText().toString());
@@ -59,7 +91,8 @@ public class editActivity extends Activity {
                         setResult(RESULT_OK,data);
 
                         //---closes the activity---
-                        finish();
+                        finish();*/
+                        editCancion(v);
                     }
                 });
         builder1.setNegativeButton("No",

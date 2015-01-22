@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -32,60 +33,43 @@ public class MainActivity extends Activity {
     private TextView lblDuracion;
     private ListView LstOpciones;
     DBController controller = new DBController(this);
-    adaptadorCanciones adaptador;
-    private ArrayList<Cancion> datos = new ArrayList<Cancion>();
+    SimpleAdapter adaptador;
+   // private ArrayList<Cancion> datos = new ArrayList<Cancion>();
     int posi;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        adaptador = new adaptadorCanciones(this, datos);
-        LstOpciones = (ListView) findViewById(R.id.LstOpciones);
-
-        //addOnClickView();
-        registerForContextMenu(LstOpciones);
         ArrayList<HashMap<String, String>> cancionList =  controller.getAllCanciones();
+        LstOpciones = (ListView) findViewById(R.id.LstOpciones);
         if(cancionList.size()!=0) {
             LstOpciones.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-
-                    //String valAnimalId = animalId.getText().toString();
+                    lblTitulo=(TextView) view.findViewById(R.id.lblTitulo);
+                    lblAutor=(TextView) view.findViewById(R.id.lblAutor);
+                    lblDuracion=(TextView) view.findViewById(R.id.lblDuracion);
                     Intent  objIndent = new Intent(getApplicationContext(),editActivity.class);
-                    //objIndent.putExtra("animalId", valAnimalId);
-                    objIndent.putExtra("titulo", adaptador.getItem(position).getTitulo().toString());
-                    objIndent.putExtra("autor", adaptador.getItem(position).getAutor().toString());
-                    objIndent.putExtra("duracion", adaptador.getItem(position).getDuracion().toString());
+                    objIndent.putExtra("titulo", lblTitulo.getText().toString());
+                    Log.e("datooooos",lblTitulo.getText().toString());
+                    objIndent.putExtra("autor", lblAutor.getText().toString());
+                    objIndent.putExtra("duracion", lblDuracion.getText().toString());
+                    //objIndent.putExtra("posicion", view);
                     startActivity(objIndent);
                 }
             });
-            //ListAdapter adaptador = new SimpleAdapter( MainActivity.this,cancionList, R.id.LstOpciones, new String[] { "titulo","autor","duracion"}, new int[] {R.id.lblTitulo, R.id.lblAutor, R.id.lblDuracion});
+            adaptador = new SimpleAdapter( MainActivity.this,cancionList, R.layout.mi_layout, new String[] { "titulo","autor","duracion"}, new int[] {R.id.lblTitulo, R.id.lblAutor, R.id.lblDuracion});
             LstOpciones.setAdapter(adaptador);
         }
+        registerForContextMenu(LstOpciones);
     }
-
     //Generacion del menu a partir del menu_main.xml
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-    private void addOnClickView() {
-        LstOpciones.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                Intent data = new Intent(MainActivity.this, editActivity.class);
-                data.putExtra("titulo", adaptador.getItem(position).getTitulo().toString());
-                data.putExtra("autor", adaptador.getItem(position).getAutor().toString());
-                data.putExtra("duracion", adaptador.getItem(position).getDuracion().toString());
-                data.putExtra("p",adaptador.getItem(position).toString());
-                startActivityForResult(data, 2);
-            }
-        });
-    }
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -109,14 +93,16 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.EliminarSeleccionada:
                 posi = info.position;
-                Toast.makeText(getBaseContext(), datos.get(posi).getTitulo(), Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(getBaseContext(), datos.get(posi).getTitulo(), Toast.LENGTH_SHORT).show();
                 Toast.makeText(getBaseContext(), datos.get(posi).getAutor(), Toast.LENGTH_SHORT).show();
-                Toast.makeText(getBaseContext(), datos.get(posi).getDuracion(), Toast.LENGTH_SHORT).show();
-                adaptador.delCancion(datos, posi);
+                Toast.makeText(getBaseContext(), datos.get(posi).getDuracion(), Toast.LENGTH_SHORT).show();*/
+                //adaptador.delCancion(datos, posi);
+
                 Intent objIntent = getIntent();
                 String CancionId = objIntent.getStringExtra("id");
                 controller.deleteCancion(CancionId);
                 adaptador.notifyDataSetChanged();//Refresca adaptador.
+
                 return true;
             default:
                 break;
@@ -136,7 +122,7 @@ public class MainActivity extends Activity {
                 startActivityForResult(in, 1);
                 return true;
             case R.id.BorrarTodas:
-                adaptador.deleteAll(datos);
+                //adaptador.deleteAll(datos);
                 adaptador.notifyDataSetChanged();//Refresca adaptador.
                 return true;
             case R.id.GuardarFichero:
@@ -151,7 +137,7 @@ public class MainActivity extends Activity {
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 Bundle bundle = data.getExtras();
-               adaptador.addCancion(R.drawable.rihanna, bundle.getString("titulo"), bundle.getString("autor"), bundle.getString("duracion"),datos);
+              // adaptador.addCancion(R.drawable.rihanna, bundle.getString("titulo"), bundle.getString("autor"), bundle.getString("duracion"),datos);
                 Toast.makeText(getBaseContext(), "Canción añadida", Toast.LENGTH_SHORT).show();
                 adaptador.notifyDataSetChanged();//Refresca adaptador.
             }
@@ -160,13 +146,13 @@ public class MainActivity extends Activity {
             if (resultCode == RESULT_OK) {
                 Bundle bundle = data.getExtras();
                 //AdapterView
-                adaptador.editCancion(new Cancion(R.drawable.rihanna, bundle.getString("titulo"), bundle.getString("autor"), bundle.getString("duracion")), Integer.parseInt(bundle.getString("pos")),datos);
+               // adaptador.editCancion(new Cancion(R.drawable.rihanna, bundle.getString("titulo"), bundle.getString("autor"), bundle.getString("duracion")), Integer.parseInt(bundle.getString("pos")),datos);
                 adaptador.notifyDataSetChanged();//Refresca adaptador.
             }
         }
     }
 
-    public void onResume() {
+    /*public void onResume() {
         super.onResume();
         if (datos.isEmpty()) {//Si el arraylist esta vacio
             //loadCanciones();
@@ -176,7 +162,7 @@ public class MainActivity extends Activity {
     public void onPause() {
         super.onPause();
         //saveCanciones(datos);
-    }
+    }*/
 
     /*public void saveCanciones(ArrayList<Cancion> d) {
         Cancion cancion = null;

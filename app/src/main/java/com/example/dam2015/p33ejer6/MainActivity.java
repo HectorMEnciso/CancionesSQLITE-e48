@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
     private TextView lblTitulo;
     private TextView lblAutor;
     private TextView lblDuracion;
+    private TextView ID;
     private ListView LstOpciones;
     DBController controller = new DBController(this);
     SimpleAdapter adaptador;
@@ -43,23 +44,27 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         ArrayList<HashMap<String, String>> cancionList =  controller.getAllCanciones();
         LstOpciones = (ListView) findViewById(R.id.LstOpciones);
+        ID=(TextView) findViewById(R.id.ID);
         if(cancionList.size()!=0) {
             LstOpciones.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
                     lblTitulo=(TextView) view.findViewById(R.id.lblTitulo);
                     lblAutor=(TextView) view.findViewById(R.id.lblAutor);
-                    lblDuracion=(TextView) view.findViewById(R.id.lblDuracion);
+                   lblDuracion=(TextView) view.findViewById(R.id.lblDuracion);
+                    ID=(TextView) view.findViewById(R.id.ID);
                     Intent  objIndent = new Intent(getApplicationContext(),editActivity.class);
+                    objIndent.putExtra("id", ID.getText().toString());
                     objIndent.putExtra("titulo", lblTitulo.getText().toString());
-                    Log.e("datooooos",lblTitulo.getText().toString());
+                 //  Log.e("datooooos",lblTitulo.getText().toString());
                     objIndent.putExtra("autor", lblAutor.getText().toString());
                     objIndent.putExtra("duracion", lblDuracion.getText().toString());
                     //objIndent.putExtra("posicion", view);
                     startActivity(objIndent);
                 }
             });
-            adaptador = new SimpleAdapter( MainActivity.this,cancionList, R.layout.mi_layout, new String[] { "titulo","autor","duracion"}, new int[] {R.id.lblTitulo, R.id.lblAutor, R.id.lblDuracion});
+
+            adaptador = new SimpleAdapter( MainActivity.this,cancionList, R.layout.mi_layout, new String[] { "id" ,"titulo","autor","duracion"}, new int[] {R.id.ID,R.id.lblTitulo, R.id.lblAutor, R.id.lblDuracion});
             LstOpciones.setAdapter(adaptador);
         }
         registerForContextMenu(LstOpciones);
@@ -89,20 +94,21 @@ public class MainActivity extends Activity {
     public boolean onContextItemSelected(MenuItem item) {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
+       TextView tv=(TextView) info.targetView.findViewById(R.id.ID);
         switch (item.getItemId()) {
             case R.id.EliminarSeleccionada:
                 posi = info.position;
+
+
                 /*Toast.makeText(getBaseContext(), datos.get(posi).getTitulo(), Toast.LENGTH_SHORT).show();
                 Toast.makeText(getBaseContext(), datos.get(posi).getAutor(), Toast.LENGTH_SHORT).show();
                 Toast.makeText(getBaseContext(), datos.get(posi).getDuracion(), Toast.LENGTH_SHORT).show();*/
                 //adaptador.delCancion(datos, posi);
-
-                Intent objIntent = getIntent();
-                String CancionId = objIntent.getStringExtra("id");
+               String CancionId = tv.getText().toString();
                 controller.deleteCancion(CancionId);
+                Intent objIntent1 = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(objIntent1);
                 adaptador.notifyDataSetChanged();//Refresca adaptador.
-
                 return true;
             default:
                 break;

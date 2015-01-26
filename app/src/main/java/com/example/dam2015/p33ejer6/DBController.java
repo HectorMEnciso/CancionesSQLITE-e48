@@ -58,7 +58,7 @@ public class DBController extends SQLiteOpenHelper {
     public void deleteCancion(String id) {
         Log.d(LOGCAT,"delete");
         SQLiteDatabase database = this.getWritableDatabase();
-        String deleteQuery = "DELETE FROM  Canciones where id='"+ id +"'";
+        String deleteQuery = "DELETE FROM Canciones where id='"+ id +"'";
         Log.d("query",deleteQuery);
         database.execSQL(deleteQuery);
     }
@@ -72,6 +72,7 @@ public class DBController extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 HashMap<String, String> map = new HashMap<String, String>();
+                map.put("id", cursor.getString(0));
                 map.put("idfoto", cursor.getString(1));
                 map.put("titulo", cursor.getString(2));
                 map.put("autor", cursor.getString(3));
@@ -91,7 +92,10 @@ public class DBController extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 //HashMap<String, String> map = new HashMap<String, String>();
-                wordList.put("id", cursor.getString(1));
+                wordList.put("idfoto", cursor.getString(1));
+                wordList.put("titulo", cursor.getString(2));
+                wordList.put("autor", cursor.getString(3));
+                wordList.put("duracion", cursor.getString(4));
                 //wordList.add(map);
             } while (cursor.moveToNext());
         }

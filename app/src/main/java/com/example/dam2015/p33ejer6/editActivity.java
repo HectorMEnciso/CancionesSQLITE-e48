@@ -31,17 +31,13 @@ public class editActivity extends Activity {
         Duracion = (EditText) findViewById(R.id.entradaDuracion);
 
         Intent objIntent = getIntent();
-       // String id = objIntent.getStringExtra("id");
-        String titulo=objIntent.getStringExtra("titulo");
-        String autor=objIntent.getStringExtra("autor");
-        String duracion=objIntent.getStringExtra("duracion");
-       // int posicion=objIntent.getIntExtra("posicion");
-        //HashMap<String, String> CancionList = controller.getCancionInfo(id);
-       // if(CancionList.size()!=0) {
-            Titulo.setText(titulo);
-            Autor.setText(autor);
-            Duracion.setText(duracion);
-       // }
+        String id = objIntent.getStringExtra("id");
+        HashMap<String, String> CancionList = controller.getCancionInfo(id);
+
+            Titulo.setText(CancionList.get("titulo"));
+            Autor.setText(CancionList.get("autor"));
+            Duracion.setText(CancionList.get("duracion"));
+
     }
     public void onClick(final View v){
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
@@ -55,8 +51,8 @@ public class editActivity extends Activity {
                         Autor = (EditText) findViewById(R.id.entradaAutor);
                         Duracion = (EditText) findViewById(R.id.entradaDuracion);
                         Intent objIntent = getIntent();
-                       // String CancionId = objIntent.getStringExtra("id");
-                       // queryValues.put("id", CancionId);
+                        String CancionId = objIntent.getStringExtra("id");
+                        queryValues.put("id", CancionId);
                         queryValues.put("titulo", Titulo.getText().toString());
                         queryValues.put("autor", Autor.getText().toString());
                         queryValues.put("duracion", Duracion.getText().toString());
@@ -73,9 +69,7 @@ public class editActivity extends Activity {
                         finish();
                     }
                 });
-
         AlertDialog alert11 = builder1.create();
         alert11.show();
-
     }
 }

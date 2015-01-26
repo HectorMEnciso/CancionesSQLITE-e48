@@ -55,6 +55,14 @@ public class DBController extends SQLiteOpenHelper {
         return database.update("Canciones", values, "id" + " = ?", new String[] { queryValues.get("id") });
     }
 
+    public void deleteAllCancion() {
+        Log.d(LOGCAT,"delete");
+        SQLiteDatabase database = this.getWritableDatabase();
+        String deleteQuery = "DELETE FROM Canciones";
+        Log.d("query",deleteQuery);
+        database.execSQL(deleteQuery);
+    }
+
     public void deleteCancion(String id) {
         Log.d(LOGCAT,"delete");
         SQLiteDatabase database = this.getWritableDatabase();

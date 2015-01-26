@@ -100,8 +100,6 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.EliminarSeleccionada:
                 posi = info.position;
-
-
                 /*Toast.makeText(getBaseContext(), datos.get(posi).getTitulo(), Toast.LENGTH_SHORT).show();
                 Toast.makeText(getBaseContext(), datos.get(posi).getAutor(), Toast.LENGTH_SHORT).show();
                 Toast.makeText(getBaseContext(), datos.get(posi).getDuracion(), Toast.LENGTH_SHORT).show();*/
@@ -111,7 +109,6 @@ public class MainActivity extends Activity {
                 cancionList.remove(posi);
                 //Intent objIntent1 = new Intent(getApplicationContext(), MainActivity.class);
                // startActivity(objIntent1);
-
                 adaptador.notifyDataSetChanged();//Refresca adaptador.
                 return true;
             default:
@@ -119,7 +116,6 @@ public class MainActivity extends Activity {
         }
         return super.onContextItemSelected(item);
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -132,7 +128,9 @@ public class MainActivity extends Activity {
                 startActivityForResult(in, 1);
                 return true;
             case R.id.BorrarTodas:
-                //adaptador.deleteAll(datos);
+                controller.deleteAllCancion();
+                Intent objIntent1 = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(objIntent1);
                 adaptador.notifyDataSetChanged();//Refresca adaptador.
                 return true;
             case R.id.GuardarFichero:

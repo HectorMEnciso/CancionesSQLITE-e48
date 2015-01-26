@@ -37,12 +37,14 @@ public class MainActivity extends Activity {
     SimpleAdapter adaptador;
    // private ArrayList<Cancion> datos = new ArrayList<Cancion>();
     int posi;
+    ArrayList<HashMap<String, String>> cancionList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ArrayList<HashMap<String, String>> cancionList =  controller.getAllCanciones();
+        cancionList =  controller.getAllCanciones();
+
         LstOpciones = (ListView) findViewById(R.id.LstOpciones);
         ID=(TextView) findViewById(R.id.ID);
         if(cancionList.size()!=0) {
@@ -106,8 +108,10 @@ public class MainActivity extends Activity {
                 //adaptador.delCancion(datos, posi);
                String CancionId = tv.getText().toString();
                 controller.deleteCancion(CancionId);
-                Intent objIntent1 = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(objIntent1);
+                cancionList.remove(posi);
+                //Intent objIntent1 = new Intent(getApplicationContext(), MainActivity.class);
+               // startActivity(objIntent1);
+
                 adaptador.notifyDataSetChanged();//Refresca adaptador.
                 return true;
             default:
